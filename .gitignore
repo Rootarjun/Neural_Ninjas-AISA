@@ -146,6 +146,11 @@ venv.bak/
 # mkdocs documentation
 /site
 
+#folders
+futurproctor/media/cheating_audios
+futurproctor/media/cheating_images
+futurproctor/media/student_photos
+
 # mypy
 .mypy_cache/
 .dmypy.json
