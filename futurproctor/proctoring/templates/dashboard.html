@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – IntelliProctor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0a58ca;
+            --primary-glow: rgba(13,110,253,0.25);
+            --dark: #0b0f1a;
+            --dark-card: #111827;
+            --surface: #161d2e;
+            --border: rgba(255,255,255,0.07);
+            --text-light: #e2e8f0;
+            --text-muted: #8892a4;
+            --accent: #38bdf8;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text-light); min-height: 100vh; overflow-x: hidden; }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.3; }
+        /* NAVBAR */
+        .navbar {
+            background: rgba(11,15,26,0.9) !important;
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-brand { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.2rem; color: #fff !important; }
+        .navbar-brand span { color: var(--accent); }
+        /* HERO BANNER */
+        .welcome-banner {
+            position: relative; z-index: 1;
+            background: linear-gradient(135deg, rgba(13,110,253,0.15) 0%, rgba(56,189,248,0.07) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 0;
+            overflow: hidden;
+        }
+        .welcome-banner::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        .welcome-banner h1 {
+            font-family: 'Sora', sans-serif; font-weight: 800;
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            background: linear-gradient(135deg, #fff 40%, var(--accent) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .welcome-banner p { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem; }
+        .btn-start {
+            background: linear-gradient(135deg, #0d6efd, #38bdf8); border: none;
+            border-radius: 12px; font-family: 'Sora', sans-serif; font-weight: 700;
+            font-size: 1rem; padding: 0.75rem 2rem; color: #fff;
+            box-shadow: 0 0 0 0 var(--primary-glow); transition: all 0.3s ease;
+        }
+        .btn-start:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(13,110,253,0.4); color: #fff; filter: brightness(1.1); }
+        /* MAIN CONTENT */
+        .main-content { position: relative; z-index: 1; padding: 3rem 0; }
+        /* RULES CARD */
+        .rules-card {
+            background: var(--dark-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: fadeUp 0.7s ease both;
+        }
+        .rules-card-header {
+            background: linear-gradient(135deg, rgba(13,110,253,0.2), rgba(56,189,248,0.1));
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem 1.75rem;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .rules-card-header .icon-badge {
+            width: 42px; height: 42px; border-radius: 10px;
+            background: rgba(13,110,253,0.2); border: 1px solid rgba(13,110,253,0.3);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent); font-size: 1.1rem;
+        }
+        .rules-card-header h5 {
+            font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.05rem; color: #fff; margin: 0;
+        }
+        .rules-card-body { padding: 1.75rem; }
+        /* RULE ITEMS */
+        .rule-item {
+            display: flex; gap: 1rem; align-items: flex-start;
+            padding: 0.9rem 0;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+        .rule-item:last-child { border-bottom: none; }
+        .rule-item:hover { background: rgba(13,110,253,0.04); border-radius: 8px; }
+        .rule-number {
+            min-width: 28px; height: 28px;
+            background: rgba(13,110,253,0.15); border: 1px solid rgba(13,110,253,0.25);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-family: 'Sora', sans-serif; font-size: 0.75rem; font-weight: 700;
+            color: var(--accent); flex-shrink: 0; margin-top: 0.1rem;
+        }
+        .rule-text { font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; }
+        .rule-text strong { color: var(--text-light); }
+        /* PAGE FOOTER */
+        .page-footer { text-align: center; padding: 1.5rem 0; color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="fas fa-eye me-2" style="color:var(--accent)"></i>Intelli<span>Proctor</span>
+        </a>
+        <div class="ms-auto d-flex gap-2 align-items-center">
+            <span style="color:var(--text-muted);font-size:0.875rem;">
+                <i class="fas fa-user-circle me-1"></i>{{ user.first_name }}
+            </span>
+            <a href="{% url 'home' %}" class="btn btn-sm" style="border:1px solid rgba(220,53,69,0.4);color:#f08090;border-radius:8px;padding:0.4rem 1rem;font-family:'Sora',sans-serif;font-size:0.8rem;">
+                <i class="fas fa-right-from-bracket me-1"></i>Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Welcome Banner -->
+<div class="welcome-banner">
+    <div class="container d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <div>
+            <h1>Welcome back, {{ user.first_name }}!</h1>
+            <p>Review the exam rules carefully before you begin.</p>
+        </div>
+        <button id="start-exam-btn" class="btn btn-start flex-shrink-0">
+            <i class="fas fa-play-circle me-2"></i>Start Exam
+        </button>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+        <div class="rules-card">
+            <div class="rules-card-header">
+                <div class="icon-badge"><i class="fa-solid fa-user"></i></div>
+                <div>
+                    <h5>Important Rules for Online Exam</h5>
+                    <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Please read all rules carefully before starting</p>
+                </div>
+            </div>
+            <div class="rules-card-body">
+                <div class="rule-item">
+                    <div class="rule-number">1</div>
+                    <div class="rule-text"><strong>Device &amp; Internet:</strong> Ensure your device is fully charged or plugged in and has a stable high-speed internet connection for the entire duration of the exam.</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">2</div>
+                    <div class="rule-text"><strong>Webcam &amp; Microphone:</strong> Keep your webcam and microphone turned on at all times. These are mandatory for real-time monitoring during the exam.</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">3</div>
+                    <div class="rule-text"><strong>No Unauthorized Tabs or Devices:</strong> Refrain from opening additional browser tabs, applications, or using external devices such as phones, smartwatches, or notes.</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">4</div>
+                    <div class="rule-text"><strong>Stay in Frame:</strong> Ensure your face is clearly visible in the webcam frame throughout the exam. Avoid looking away from the screen frequently.</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">5</div>
+                    <div class="rule-text"><strong>Quiet &amp; Distraction-Free Environment:</strong> Select a quiet location where you won't be interrupted. Background noise or distractions may cause your session to be flagged.</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">6</div>
+                    <div class="rule-text"><strong>Individual Effort Only:</strong> The examination is strictly individual. Any form of collaboration or communication with others is strictly prohibited.</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">7</div>
+                    <div class="rule-text"><strong>Behavior Monitoring:</strong> AI systems and live proctors may monitor your activity including webcam and microphone feeds. Suspicious activities will be flagged for review.</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">8</div>
+                    <div class="rule-text"><strong>Consequences of Violations:</strong> Any violation may lead to immediate termination of your exam session, invalidation of your results, and possible disciplinary action.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-footer">&copy; 2026 IntelliProctor · AI Proctoring System. All Rights Reserved.</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('start-exam-btn').addEventListener('click', function () {
+        window.location.href = '/exam';
+    });
+    (function(){
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, particles = [];
+        function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        resize(); window.addEventListener('resize', resize);
+        class Particle {
+            constructor(){ this.x=Math.random()*W; this.y=Math.random()*H; this.r=Math.random()*1.8+0.4; this.dx=(Math.random()-0.5)*0.3; this.dy=(Math.random()-0.5)*0.3; this.alpha=Math.random()*0.45+0.1; }
+            update(){ this.x+=this.dx; this.y+=this.dy; if(this.x<0||this.x>W)this.dx*=-1; if(this.y<0||this.y>H)this.dy*=-1; }
+            draw(){ ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle=`rgba(56,189,248,${this.alpha})`; ctx.fill(); }
+        }
+        for(let i=0;i<50;i++) particles.push(new Particle());
+        function loop(){ ctx.clearRect(0,0,W,H); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); }
+        loop();
+    })();
+</script>
+</body>
+</html>

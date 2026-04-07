@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Question – IntelliProctor Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0a58ca;
+            --primary-glow: rgba(13,110,253,0.25);
+            --dark: #0b0f1a;
+            --dark-card: #111827;
+            --surface: #161d2e;
+            --border: rgba(255,255,255,0.07);
+            --text-light: #e2e8f0;
+            --text-muted: #8892a4;
+            --accent: #38bdf8;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text-light); min-height: 100vh; overflow-x: hidden; }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.25; }
+        .navbar {
+            background: rgba(11,15,26,0.9) !important; backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border); padding: 1rem 0;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-brand { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.1rem; color: #fff !important; }
+        .navbar-brand span { color: var(--accent); }
+        .page-wrapper {
+            position: relative; z-index: 1;
+            min-height: calc(100vh - 70px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 3rem 1rem;
+        }
+        .form-card {
+            background: var(--dark-card); border: 1px solid var(--border);
+            border-radius: 24px; padding: 2.5rem 2.5rem;
+            width: 100%; max-width: 640px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(13,110,253,0.1);
+            animation: fadeUp 0.7s ease both; position: relative; overflow: hidden;
+        }
+        .form-card::before {
+            content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+            width: 350px; height: 200px;
+            background: radial-gradient(ellipse, rgba(13,110,253,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .form-card-header { text-align: center; margin-bottom: 2rem; }
+        .form-card-header .icon-ring {
+            width: 64px; height: 64px;
+            background: rgba(13,110,253,0.12); border: 1px solid rgba(13,110,253,0.3);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem; font-size: 1.5rem; color: var(--accent);
+        }
+        .form-card-header h2 {
+            font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.6rem;
+            background: linear-gradient(135deg, #fff 40%, var(--accent) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .form-card-header p { color: var(--text-muted); font-size: 0.875rem; margin-top: 0.3rem; }
+        .form-label {
+            color: var(--text-muted); font-size: 0.8rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem;
+        }
+        .form-control, .form-select {
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--text-light); border-radius: 10px;
+            padding: 0.65rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-control:focus, .form-select:focus {
+            background: var(--surface); color: var(--text-light);
+            border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); outline: none;
+        }
+        .form-control::placeholder { color: rgba(136,146,164,0.5); }
+        .form-select option { background: var(--surface); color: var(--text-light); }
+        textarea.form-control { resize: vertical; min-height: 100px; }
+        /* OPTION GROUP */
+        .option-group {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; margin-top: 0.25rem;
+        }
+        .option-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
+        .option-row:last-child { margin-bottom: 0; }
+        .option-badge {
+            width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+            background: rgba(13,110,253,0.15); border: 1px solid rgba(13,110,253,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Sora', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--accent);
+        }
+        /* DIFFICULTY SELECTOR */
+        .diff-group { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+        .diff-option input[type="radio"] { display: none; }
+        .diff-option label {
+            padding: 0.45rem 1.1rem; border-radius: 8px; cursor: pointer;
+            font-family: 'Sora', sans-serif; font-size: 0.8rem; font-weight: 600;
+            border: 1px solid var(--border); color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .diff-option input:checked + label { border-color: var(--primary); background: rgba(13,110,253,0.15); color: var(--text-light); }
+        .diff-option label:hover { border-color: rgba(13,110,253,0.5); color: var(--text-light); }
+        /* SUBMIT */
+        .btn-submit {
+            background: linear-gradient(135deg, #0d6efd, #38bdf8); border: none;
+            border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700;
+            font-size: 1rem; letter-spacing: 0.03em; padding: 0.75rem;
+            transition: all 0.3s ease; color: #fff;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(13,110,253,0.35); filter: brightness(1.1); color: #fff; }
+        .back-link { display: flex; align-items: center; gap: 0.4rem; color: var(--text-muted); font-size: 0.875rem; text-decoration: none; margin-bottom: 1.5rem; transition: color 0.2s; }
+        .back-link:hover { color: var(--accent); }
+        .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+        .page-footer { text-align: center; padding: 1.5rem 0; color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+
+<nav class="navbar navbar-dark navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'admin_dashboard' %}">
+            <i class="fas fa-eye me-2" style="color:var(--accent)"></i>Intelli<span>Proctor</span>
+            <span style="font-size:0.7rem;font-weight:400;color:var(--text-muted);margin-left:0.4rem;">Admin</span>
+        </a>
+        <div class="ms-auto">
+            <a href="{% url 'home' %}" class="btn btn-sm" style="border:1px solid rgba(220,53,69,0.4);color:#f08090;border-radius:8px;padding:0.4rem 1rem;font-family:'Sora',sans-serif;font-size:0.8rem;">
+                <i class="fas fa-right-from-bracket me-1"></i>Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+    <div style="width:100%;max-width:640px;">
+        <a href="{% url 'admin_dashboard' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <div class="form-card">
+            <div class="form-card-header">
+                <div class="icon-ring"><i class="fas fa-circle-question"></i></div>
+                <h2>Add New Question</h2>
+                <p>Create a new exam question for the question bank</p>
+            </div>
+
+            <form method="POST" action="/add_question/">
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                <div class="mb-3">
+                    <label for="question_text" class="form-label">Question Text</label>
+                    <textarea class="form-control" id="question_text" name="question_text" required placeholder="Enter the question…"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="question_type" class="form-label">Question Type</label>
+                    <select class="form-select" id="question_type" name="question_type" required>
+                        <option value="mcq">Multiple Choice (MCQ)</option>
+                        <option value="descriptive">Descriptive</option>
+                    </select>
+                </div>
+
+                <div id="mcq_options" class="mb-3">
+                    <label class="form-label">Answer Options</label>
+                    <div class="option-group">
+                        <div class="option-row">
+                            <div class="option-badge">A</div>
+                            <input type="text" class="form-control" name="option1" placeholder="Option A" required>
+                        </div>
+                        <div class="option-row">
+                            <div class="option-badge">B</div>
+                            <input type="text" class="form-control" name="option2" placeholder="Option B" required>
+                        </div>
+                        <div class="option-row">
+                            <div class="option-badge">C</div>
+                            <input type="text" class="form-control" name="option3" placeholder="Option C (optional)">
+                        </div>
+                        <div class="option-row">
+                            <div class="option-badge">D</div>
+                            <input type="text" class="form-control" name="option4" placeholder="Option D (optional)">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="correct_answer_block" class="mb-3">
+                    <label for="correct_answer_input" class="form-label">Correct Answer</label>
+                    <input type="text" class="form-control" id="correct_answer_input" name="correct_answer" required placeholder="e.g. A or the correct option text">
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="mb-4">
+                    <label class="form-label">Difficulty Level</label>
+                    <div class="diff-group">
+                        <div class="diff-option">
+                            <input type="radio" name="difficulty" id="easy" value="easy" checked>
+                            <label for="easy" style="color:#75e0a7;border-color:rgba(25,135,84,0.25);">Easy</label>
+                        </div>
+                        <div class="diff-option">
+                            <input type="radio" name="difficulty" id="medium" value="medium">
+                            <label for="medium" style="color:#ffd464;border-color:rgba(255,193,7,0.25);">Medium</label>
+                        </div>
+                        <div class="diff-option">
+                            <input type="radio" name="difficulty" id="hard" value="hard">
+                            <label for="hard" style="color:#f08090;border-color:rgba(220,53,69,0.25);">Hard</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-submit w-100">
+                    <i class="fas fa-plus-circle me-2"></i>Add Question to Bank
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="page-footer">&copy; 2026 IntelliProctor · AI Proctoring System. All Rights Reserved.</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById("question_type").addEventListener("change", function () {
+        const isMCQ = this.value === "mcq";
+        document.getElementById("mcq_options").style.display = isMCQ ? "block" : "none";
+        document.getElementById("correct_answer_block").style.display = isMCQ ? "block" : "none";
+    });
+    (function(){
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, particles = [];
+        function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        resize(); window.addEventListener('resize', resize);
+        class Particle {
+            constructor(){ this.x=Math.random()*W; this.y=Math.random()*H; this.r=Math.random()*1.5+0.4; this.dx=(Math.random()-0.5)*0.3; this.dy=(Math.random()-0.5)*0.3; this.alpha=Math.random()*0.4+0.1; }
+            update(){ this.x+=this.dx; this.y+=this.dy; if(this.x<0||this.x>W)this.dx*=-1; if(this.y<0||this.y>H)this.dy*=-1; }
+            draw(){ ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle=`rgba(56,189,248,${this.alpha})`; ctx.fill(); }
+        }
+        for(let i=0;i<40;i++) particles.push(new Particle());
+        function loop(){ ctx.clearRect(0,0,W,H); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); }
+        loop();
+    })();
+</script>
+</body>
+</html>

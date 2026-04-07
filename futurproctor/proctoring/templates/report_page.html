@@ -1,0 +1,282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Report – {{ student.name }} – IntelliProctor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --primary-glow: rgba(13,110,253,0.25);
+            --dark: #0b0f1a;
+            --dark-card: #111827;
+            --surface: #161d2e;
+            --border: rgba(255,255,255,0.07);
+            --text-light: #e2e8f0;
+            --text-muted: #8892a4;
+            --accent: #38bdf8;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text-light); min-height: 100vh; }
+        /* NAVBAR */
+        .navbar {
+            background: rgba(11,15,26,0.95) !important; backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border); padding: 1rem 0;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-brand { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.1rem; color: #fff !important; }
+        .navbar-brand span { color: var(--accent); }
+        /* HERO STRIP */
+        .report-hero {
+            background: linear-gradient(135deg, rgba(13,110,253,0.12), rgba(56,189,248,0.06));
+            border-bottom: 1px solid var(--border); padding: 2rem 0;
+            position: relative; overflow: hidden;
+        }
+        .report-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px; pointer-events: none;
+        }
+        .report-hero h1 {
+            font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.5rem;
+            background: linear-gradient(135deg, #fff 40%, var(--accent) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .report-hero p { color: var(--text-muted); font-size: 0.875rem; margin-top: 0.2rem; }
+        /* DOWNLOAD BTN */
+        .btn-download {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: linear-gradient(135deg, #0d6efd, #38bdf8); border: none;
+            border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700;
+            font-size: 0.85rem; padding: 0.6rem 1.4rem; color: #fff;
+            transition: all 0.3s; text-decoration: none;
+        }
+        .btn-download:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(13,110,253,0.35); color: #fff; }
+        /* MAIN */
+        .report-main { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+        /* SECTION CARDS */
+        .report-section {
+            background: var(--dark-card); border: 1px solid var(--border);
+            border-radius: 18px; margin-bottom: 1.5rem; overflow: hidden;
+            animation: fadeUp 0.6s ease both;
+        }
+        .report-section:nth-child(1) { animation-delay: 0.05s; }
+        .report-section:nth-child(2) { animation-delay: 0.12s; }
+        .report-section:nth-child(3) { animation-delay: 0.19s; }
+        .report-section:nth-child(4) { animation-delay: 0.26s; }
+        .report-section:nth-child(5) { animation-delay: 0.33s; }
+        .section-header {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: rgba(13,110,253,0.07);
+            border-bottom: 1px solid var(--border);
+        }
+        .section-header .s-icon {
+            width: 36px; height: 36px; border-radius: 9px;
+            background: rgba(13,110,253,0.15); border: 1px solid rgba(13,110,253,0.25);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent); font-size: 0.9rem; flex-shrink: 0;
+        }
+        .section-header h5 {
+            font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.95rem; color: #fff; margin: 0;
+        }
+        .section-body { padding: 1.5rem; }
+        /* STUDENT PHOTO */
+        .student-photo {
+            width: 90px; height: 90px; object-fit: cover;
+            border-radius: 12px; border: 2px solid rgba(13,110,253,0.3);
+            box-shadow: 0 0 20px rgba(13,110,253,0.2);
+            flex-shrink: 0;
+        }
+        /* INFO ROWS */
+        .info-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.875rem; }
+        .info-row .lbl { color: var(--text-muted); min-width: 120px; }
+        .info-row .val { color: var(--text-light); font-weight: 500; }
+        /* STAT PILLS */
+        .stat-pills { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+        .stat-pill {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; padding: 0.75rem 1.25rem;
+        }
+        .stat-pill .val { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.3rem; color: #fff; line-height: 1; }
+        .stat-pill .lbl { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.2rem; }
+        /* STATUS BADGE */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.35rem 0.9rem; border-radius: 8px;
+            font-family: 'Sora', sans-serif; font-size: 0.8rem; font-weight: 700;
+        }
+        .status-badge.safe { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.25); color: #4ade80; }
+        .status-badge.cheat { background: rgba(240,128,144,0.12); border: 1px solid rgba(240,128,144,0.25); color: #f08090; }
+        /* IMAGES GRID */
+        .cheating-img-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden; transition: all 0.3s;
+        }
+        .cheating-img-card:hover { border-color: rgba(13,110,253,0.3); transform: scale(1.02); }
+        .cheating-img-card img { width: 100%; height: 160px; object-fit: cover; cursor: zoom-in; }
+        .cheating-img-card .img-meta { padding: 0.75rem; }
+        .cheating-img-card .img-meta p { margin: 0; font-size: 0.75rem; color: var(--text-muted); }
+        .cheating-img-card .img-meta strong { color: var(--text-light); }
+        /* AUDIO */
+        audio { width: 100%; border-radius: 8px; margin-bottom: 0.75rem; accent-color: var(--primary); }
+        /* PAGE FOOTER */
+        .page-footer { text-align: center; padding: 1.5rem 0; color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border); }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-eye me-2" style="color:var(--accent)"></i>Intelli<span>Proctor</span>
+        </a>
+        <div class="ms-auto d-flex gap-2">
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-sm" style="border:1px solid var(--border);color:var(--text-muted);border-radius:8px;padding:0.4rem 1rem;font-family:'Sora',sans-serif;font-size:0.8rem;">
+                <i class="fas fa-arrow-left me-1"></i>Dashboard
+            </a>
+            <!-- <a href="{% url 'download_report' student.id %}" class="btn-download">
+                <i class="fas fa-download"></i>Download Report
+            </a> -->
+        </div>
+    </div>
+</nav>
+
+<!-- Report Hero -->
+<div class="report-hero">
+    <div class="container">
+        <h1><i class="fas fa-file-lines me-2" style="-webkit-text-fill-color:var(--accent)"></i>Student Examination Report</h1>
+        <!-- <p>Generated report for {{ student.name }} · {{ exam.exam_name }}</p> -->
+         <p>Generated report for {{ student.name }}</p>
+    </div>
+</div>
+
+<!-- Report Body -->
+<div class="report-main">
+
+    <!-- Student Details -->
+    <div class="report-section">
+        <div class="section-header">
+            <div class="s-icon"><i class="fas fa-user"></i></div>
+            <h5>Student Details</h5>
+        </div>
+        <div class="section-body">
+            <div class="d-flex gap-3 align-items-start flex-wrap">
+                <img src="{{ student.photo.url }}" alt="{{ student.name }}" class="student-photo">
+                <div>
+                    <h4 style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:0.75rem;">{{ student.name }}</h4>
+                    <div class="info-row"><span class="lbl">Email</span><span class="val">{{ student.email }}</span></div>
+                    <div class="info-row"><span class="lbl">Address</span><span class="val">{{ student.address|default:"Not provided" }}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Details -->
+    <div class="report-section">
+        <div class="section-header">
+            <div class="s-icon"><i class="fas fa-graduation-cap"></i></div>
+            <h5>Exam Details</h5>
+        </div>
+        <div class="section-body">
+            <!-- <div class="info-row"><span class="lbl">Exam Name</span><span class="val">{{ exam.exam_name }}</span></div> -->
+            <div class="info-row"><span class="lbl">Total Questions</span><span class="val">{{ total_questions }}</span></div>
+            <div class="info-row"><span class="lbl">Correct Answers</span><span class="val">{{ correct_answers }}</span></div>
+            <div class="info-row"><span class="lbl">Final Score</span>
+                <span class="val" style="font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;color:var(--accent);">
+                    {{ exam.percentage_score|default:"0" }}%
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cheating Summary -->
+    <div class="report-section">
+        <div class="section-header">
+            <div class="s-icon"><i class="fas fa-shield-halved"></i></div>
+            <h5>Cheating & Integrity Summary</h5>
+        </div>
+        <div class="section-body">
+            <div class="d-flex flex-wrap gap-3 align-items-start mb-3">
+                {% if cheating_status %}
+                <span class="status-badge cheat"><i class="fas fa-triangle-exclamation"></i> Cheating Detected</span>
+                {% else %}
+                <span class="status-badge safe"><i class="fas fa-check-circle"></i> No Cheating Detected</span>
+                {% endif %}
+
+                {% if total_tab_switch_count >= 1 %}
+                <span class="status-badge cheat"><i class="fas fa-desktop"></i> {{ total_tab_switch_count }} Tab Switch{{ total_tab_switch_count|pluralize }}</span>
+                {% else %}
+                <span class="status-badge safe"><i class="fas fa-desktop"></i> No Tab Switches</span>
+                {% endif %}
+            </div>
+
+            {% if detected_objects != "No objects detected" %}
+            <div class="info-row"><span class="lbl">Objects Detected</span><span class="val" style="color:#f08090;">{{ detected_objects }}</span></div>
+            {% else %}
+            <div class="info-row"><span class="lbl">Objects</span><span class="val" style="color:#4ade80;">No suspicious objects</span></div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Detected Images -->
+    <div class="report-section">
+        <div class="section-header">
+            <div class="s-icon"><i class="fas fa-camera"></i></div>
+            <h5>Detected Incident Images</h5>
+        </div>
+        <div class="section-body">
+            {% if cheating_images %}
+            <div class="row g-3">
+                {% for img in cheating_images %}
+                <div class="col-md-4 col-sm-6">
+                    <div class="cheating-img-card">
+                        <img src="{{ img.url }}" alt="Incident Image" onclick="window.open('{{ img.url }}','_blank')">
+                        <div class="img-meta">
+                            <p><strong>Type:</strong> {{ img.event_type }}</p>
+                            <p><strong>Time:</strong> {{ img.timestamp }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color:var(--text-muted);font-size:0.875rem;"><i class="fas fa-image me-1"></i>No cheating images captured.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Detected Audio -->
+    <div class="report-section">
+        <div class="section-header">
+            <div class="s-icon"><i class="fas fa-microphone"></i></div>
+            <h5>Detected Audio Recordings</h5>
+        </div>
+        <div class="section-body">
+            {% if audio_urls %}
+                {% for audio in audio_urls %}
+                <div class="mb-2">
+                    <audio controls>
+                        <source src="{{ audio }}" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+                {% endfor %}
+            {% else %}
+            <p style="color:var(--text-muted);font-size:0.875rem;"><i class="fas fa-microphone-slash me-1"></i>No suspicious audio recorded.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<div class="page-footer">&copy; 2026 IntelliProctor · AI Proctoring System. All Rights Reserved.</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,762 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliProctor - Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0a58ca;
+            --primary-glow: rgba(13, 110, 253, 0.25);
+            --secondary: #6c757d;
+            --dark: #0b0f1a;
+            --dark-card: #111827;
+            --surface: #161d2e;
+            --border: rgba(255,255,255,0.07);
+            --text-light: #e2e8f0;
+            --text-muted: #8892a4;
+            --accent: #38bdf8;
+            --accent2: #818cf8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(11,15,26,0.85) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+            animation: slideDown 0.6s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        .navbar-brand .logo {
+            height: 44px;
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            padding: 0.5rem 1.4rem;
+            border-radius: 8px;
+            font-family: 'Sora', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 0 var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-light);
+            padding: 0.5rem 1.4rem;
+            border-radius: 8px;
+            font-family: 'Sora', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: #fff;
+            background: rgba(13,110,253,0.12);
+            transform: translateY(-2px);
+        }
+
+        /* ── HERO ── */
+        .hero-section {
+            min-height: 92vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 5rem 0;
+        }
+
+        /* animated mesh background */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 700px 500px at 70% 40%, rgba(13,110,253,0.13) 0%, transparent 70%),
+                radial-gradient(ellipse 500px 400px at 20% 80%, rgba(56,189,248,0.07) 0%, transparent 60%);
+            animation: meshPulse 8s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        /* grid overlay */
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        @keyframes meshPulse {
+            from { opacity: 0.7; transform: scale(1); }
+            to   { opacity: 1;   transform: scale(1.05); }
+        }
+
+        .hero-section .container { position: relative; z-index: 1; }
+
+        .hero-section h1 {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 800;
+            line-height: 1.15;
+            background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: fadeUp 0.8s ease 0.2s both;
+        }
+
+        .hero-section h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.8s ease 0.4s both;
+        }
+
+        .cta-buttons { animation: fadeUp 0.8s ease 0.6s both; }
+
+        .hero-image-container {
+            position: relative;
+            animation: fadeUp 0.9s ease 0.3s both;
+        }
+
+        .floating-image {
+            filter: drop-shadow(0 20px 50px rgba(13,110,253,0.35));
+            animation: float 6s ease-in-out infinite;
+            max-width: 100%;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-18px); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── BADGES STRIP ── */
+        .badges-strip {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 1.2rem 0;
+            overflow: hidden;
+        }
+
+        .badges-track {
+            display: flex;
+            gap: 3rem;
+            animation: marquee 18s linear infinite;
+            white-space: nowrap;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .badge-item i { color: var(--primary); }
+
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+
+        /* ── AI FEATURES SECTION ── */
+        .ai-proctor-features {
+            padding: 7rem 0;
+            position: relative;
+            background: linear-gradient(180deg, var(--dark) 0%, var(--surface) 100%);
+        }
+
+        .ai-proctor-features .section-title {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 40%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+        }
+
+        .ai-proctor-features .section-subtitle {
+            font-size: 1rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: 0.01em;
+        }
+
+        .ai-head-image {
+            border-radius: 24px;
+            box-shadow: 0 30px 80px rgba(13,110,253,0.3);
+            animation: float 7s ease-in-out infinite;
+            border: 1px solid rgba(13,110,253,0.2);
+        }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features-list li {
+            position: relative;
+            padding: 0.65rem 0 0.65rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.97rem;
+            border-bottom: 1px solid var(--border);
+            transition: color 0.3s;
+        }
+
+        .features-list li:last-child { border-bottom: none; }
+
+        .features-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary-glow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .features-list li:hover { color: var(--text-light); }
+        .features-list li:hover::before {
+            transform: translateY(-50%) scale(1.4);
+            box-shadow: 0 0 18px var(--primary-glow);
+        }
+
+        /* ── ADVANCED FEATURES ── */
+        .advanced-features-section {
+            padding: 7rem 0;
+            background: var(--dark);
+            position: relative;
+        }
+
+        .advanced-features-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 800px 600px at 50% 0%, rgba(13,110,253,0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .advanced-features-section .section-title {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 40%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .advanced-features-section .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-top: 0.5rem;
+        }
+
+        /* ── FEATURE CARDS ── */
+        .feature-card {
+            background: var(--dark-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem 1.8rem;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+            animation: fadeUp 0.7s ease both;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 200px 200px at 50% -20%, rgba(13,110,253,0.15) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 60px rgba(13,110,253,0.2);
+            border-color: rgba(13,110,253,0.4);
+        }
+
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-icon {
+            width: 72px;
+            height: 72px;
+            background: rgba(13,110,253,0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            border: 1px solid rgba(13,110,253,0.2);
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: rgba(13,110,253,0.2);
+            transform: scale(1.08);
+        }
+
+        .feature-icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            filter: brightness(1.1);
+        }
+
+        .feature-card h3 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* stagger card animations */
+        .feature-card:nth-child(1) { animation-delay: 0.05s; }
+        .feature-card:nth-child(2) { animation-delay: 0.15s; }
+        .feature-card:nth-child(3) { animation-delay: 0.25s; }
+        .feature-card:nth-child(4) { animation-delay: 0.35s; }
+        .feature-card:nth-child(5) { animation-delay: 0.45s; }
+        .feature-card:nth-child(6) { animation-delay: 0.55s; }
+
+        /* ── DATA NOTE ── */
+        .data-storage-note {
+            background: linear-gradient(135deg, rgba(13,110,253,0.12), rgba(56,189,248,0.08));
+            border: 1px solid rgba(13,110,253,0.25);
+            border-radius: 14px;
+            padding: 1.2rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .data-storage-note strong { color: var(--accent); }
+
+        /* ── FOOTER ── */
+        .footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 2.5rem 0 !important;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--text-muted) !important;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff !important;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        /* ── SCROLL REVEAL ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── PARTICLE CANVAS ── */
+        #particle-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.35;
+        }
+
+        /* ── PULSE RING on hero ── */
+        .pulse-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            width: 320px; height: 320px;
+            border-radius: 50%;
+            border: 1px solid rgba(13,110,253,0.2);
+            animation: pulseRing 3s ease-out infinite;
+            pointer-events: none;
+        }
+
+        .pulse-ring:nth-child(2) { animation-delay: 1s; }
+        .pulse-ring:nth-child(3) { animation-delay: 2s; }
+
+        @keyframes pulseRing {
+            0%   { transform: translate(-50%,-50%) scale(0.8); opacity: 1; }
+            100% { transform: translate(-50%,-50%) scale(1.6); opacity: 0; }
+        }
+
+        /* responsive tweaks */
+        @media (max-width: 991px) {
+            .hero-section { padding: 4rem 0 3rem; min-height: auto; }
+            .hero-image-container { margin-top: 2.5rem; text-align: center; }
+            .ai-proctor-features .col-lg-6:first-child { text-align: center; margin-bottom: 2rem; }
+        }
+
+        @media (max-width: 767px) {
+            .feature-card { margin-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Particle canvas -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'images/monitor_logo.png' %}" alt="FutureProctor Logo" class="logo">
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <li class="nav-item"><a class="btn btn-primary" href="{% url 'login' %}" role="button">Login</a></li>
+                <li class="nav-item"><a class="btn btn-secondary ms-1" href="{% url 'registration' %}" role="button">Register</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<main class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1>AI-Based Online Exam Proctoring System</h1>
+                <h2>A Proctoring System Powered by Artificial Intelligence!</h2>
+                <div class="cta-buttons">
+                    <!-- CTA buttons can go here -->
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image-container" style="position:relative;">
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <img src="{% static 'images/ai-procotor.png' %}" alt="AI Proctor Dashboard" class="img-fluid floating-image" style="position:relative;z-index:1;">
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Scrolling badges strip -->
+<div class="badges-strip">
+    <div class="badges-track">
+        <!-- duplicated for seamless loop -->
+        <span class="badge-item"><i class="fas fa-shield-alt"></i> Exam Integrity</span>
+        <span class="badge-item"><i class="fas fa-eye"></i> Real-time Monitoring</span>
+        <span class="badge-item"><i class="fas fa-user-check"></i> Face Verification</span>
+        <span class="badge-item"><i class="fas fa-microphone-slash"></i> Audio Analysis</span>
+        <span class="badge-item"><i class="fas fa-desktop"></i> Tab Detection</span>
+        <span class="badge-item"><i class="fas fa-database"></i> Secure PostgreSQL</span>
+        <span class="badge-item"><i class="fas fa-bolt"></i> Low Bandwidth</span>
+        <span class="badge-item"><i class="fas fa-certificate"></i> Credible Certificates</span>
+        <!-- duplicate -->
+        <span class="badge-item"><i class="fas fa-shield-alt"></i> Exam Integrity</span>
+        <span class="badge-item"><i class="fas fa-eye"></i> Real-time Monitoring</span>
+        <span class="badge-item"><i class="fas fa-user-check"></i> Face Verification</span>
+        <span class="badge-item"><i class="fas fa-microphone-slash"></i> Audio Analysis</span>
+        <span class="badge-item"><i class="fas fa-desktop"></i> Tab Detection</span>
+        <span class="badge-item"><i class="fas fa-database"></i> Secure PostgreSQL</span>
+        <span class="badge-item"><i class="fas fa-bolt"></i> Low Bandwidth</span>
+        <span class="badge-item"><i class="fas fa-certificate"></i> Credible Certificates</span>
+    </div>
+</div>
+
+<!-- AI Proctor Features -->
+{% load static %}
+<section class="ai-proctor-features">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 reveal">
+                <img src="{% static 'images/ai-sec.png' %}" alt="AI Proctor Illustration" class="img-fluid ai-head-image w-100">
+            </div>
+            <div class="col-lg-6 reveal">
+                <div class="features-content">
+                    <p style="color:var(--primary);font-weight:600;font-size:0.85rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.75rem;">Why IntelliProctor?</p>
+                    <h2 class="section-title">AI-Based Online Exam Proctoring System</h2>
+                    <h3 class="section-subtitle">A Necessary Ingredient for Credible Online Certificates!</h3>
+                    <ul class="features-list mt-3">
+                        <li>Ensures credibility of exam results</li>
+                        <li>Very easy to use by both instructors and students</li>
+                        <li>Works with any examination portal!</li>
+                        <li>Minimal traffic — works even with weak internet connections</li>
+                        <li>Real-time monitoring and detailed final reports for all suspicious activities</li>
+                        <li>Uses face recognition &amp; audio analysis for an in-class exam experience</li>
+                        <li>And many other practical features…</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Advanced Features -->
+{% load static %}
+<section class="advanced-features-section">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center reveal">
+                <p style="color:var(--primary);font-weight:600;font-size:0.85rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.75rem;">Capabilities</p>
+                <h2 class="section-title">Advanced Proctoring Features</h2>
+                <p class="section-subtitle">Comprehensive Monitoring for Exam Integrity</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 col-sm-6 d-flex">
+                <div class="feature-card w-100 reveal">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/facial.jpg' %}" alt="Face Verification">
+                    </div>
+                    <h3>Face Verification</h3>
+                    <p>The system opens the exam only after facial verification. The student uploads their picture during registration, used across all exams to confirm identity.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 d-flex">
+                <div class="feature-card w-100 reveal">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/touch.png' %}" alt="Tab Switching">
+                    </div>
+                    <h3>Browser Tab Switching Detection</h3>
+                    <p>The system monitors tab switching and flags any unauthorized attempts during the exam in real time.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 d-flex">
+                <div class="feature-card w-100 reveal">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/object.png' %}" alt="Object Detection">
+                    </div>
+                    <h3>Object Detection</h3>
+                    <p>Detects unauthorized objects like books and smartphones during the exam using advanced computer vision.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 d-flex">
+                <div class="feature-card w-100 reveal">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/eye.jpg' %}" alt="Gaze Detection">
+                    </div>
+                    <h3>Gaze Detection</h3>
+                    <p>Detects gaze movement to ensure candidates remain focused on the exam screen throughout the session.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 d-flex">
+                <div class="feature-card w-100 reveal">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/mp.png' %}" alt="Multiple Person Detection">
+                    </div>
+                    <h3>Multiple Person Detection</h3>
+                    <p>Detects the presence of multiple individuals during the exam to ensure proper authentication and prevent impersonation.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 d-flex">
+                <div class="feature-card w-100 reveal">
+                    <div class="feature-icon">
+                        <img src="{% static 'images/audio.png' %}" alt="Audio Analysis">
+                    </div>
+                    <h3>Audio Analysis</h3>
+                    <p>Records and analyzes background sounds to detect any suspicious noises or conversations during the exam.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-12 text-center reveal">
+                <p class="data-storage-note">
+                    <strong><i class="fas fa-lock me-2"></i>Secure Data Management:</strong>&nbsp; All collected data is securely stored in PostgreSQL for comprehensive review and reporting.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer text-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <p>&copy; 2026 IntelliProctor · AI Proctoring System. All Rights Reserved.</p>
+                <div class="social-links mt-3 d-flex justify-content-center gap-2">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ── Particle canvas ── */
+(function(){
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+    const N = 60;
+
+    function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+        constructor(){
+            this.x = Math.random()*W;
+            this.y = Math.random()*H;
+            this.r = Math.random()*1.8+0.4;
+            this.dx = (Math.random()-0.5)*0.35;
+            this.dy = (Math.random()-0.5)*0.35;
+            this.alpha = Math.random()*0.5+0.15;
+        }
+        update(){ this.x+=this.dx; this.y+=this.dy;
+            if(this.x<0||this.x>W) this.dx*=-1;
+            if(this.y<0||this.y>H) this.dy*=-1; }
+        draw(){
+            ctx.beginPath();
+            ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+            ctx.fillStyle=`rgba(56,189,248,${this.alpha})`;
+            ctx.fill();
+        }
+    }
+
+    for(let i=0;i<N;i++) particles.push(new Particle());
+
+    function connectParticles(){
+        for(let i=0;i<particles.length;i++){
+            for(let j=i+1;j<particles.length;j++){
+                const d = Math.hypot(particles[i].x-particles[j].x, particles[i].y-particles[j].y);
+                if(d<130){
+                    ctx.strokeStyle=`rgba(13,110,253,${0.12*(1-d/130)})`;
+                    ctx.lineWidth=0.7;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x,particles[i].y);
+                    ctx.lineTo(particles[j].x,particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function loop(){
+        ctx.clearRect(0,0,W,H);
+        particles.forEach(p=>{ p.update(); p.draw(); });
+        connectParticles();
+        requestAnimationFrame(loop);
+    }
+    loop();
+})();
+
+/* ── Scroll reveal ── */
+(function(){
+    const els = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+            if(e.isIntersecting){
+                e.target.classList.add('visible');
+                io.unobserve(e.target);
+            }
+        });
+    },{ threshold:0.12 });
+    els.forEach(el=>io.observe(el));
+})();
+</script>
+</body>
+</html>
