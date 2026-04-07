@@ -501,7 +501,9 @@ def exam(request):
 
     # Load exam questions from the JSON file
     try:
-        with open("D:\\proctoring_systems\\ai.json") as file:
+        base_dir = os.path.dirname(__file__)
+        file_path = os.path.join(base_dir, "exam_questions", "ai.json")
+        with open(file_path,"r") as file:
             data = json.load(file)
         questions = data.get("questions", [])
     except FileNotFoundError:
