@@ -615,11 +615,12 @@ def record_tab_switch(request):
         # Save the updated CheatingEvent
         cheating_event.save()
         logger.info("Cheating Event saved successfully")
-
-        # If tab switches exceed 5, take action
-        if cheating_event.tab_switch_count > 5:
+        
+        limit=2
+        # If tab switches exceed limit, take action
+        if cheating_event.tab_switch_count > limit:
             stop_event.set()  # Stop background threads (ensure stop_event is defined)
-            logger.info("Tab switches exceeded 5, terminated from the exam")
+            logger.info(f"Tab switches exceeded {limit}, terminated from the exam")
             return JsonResponse({
                 "status": "terminated",
                 "message": "You have exceeded the allowed tab switches. Your exam is terminated."
