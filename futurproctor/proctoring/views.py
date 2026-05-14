@@ -578,6 +578,7 @@ logger = logging.getLogger(__name__)
 # Tab switch tracking View
 @login_required
 def record_tab_switch(request):
+    
     if request.method == "POST":
         # Get the current student
         student = request.user.student
@@ -616,11 +617,11 @@ def record_tab_switch(request):
         cheating_event.save()
         logger.info("Cheating Event saved successfully")
         
-        limit=2
+        
         # If tab switches exceed limit, take action
-        if cheating_event.tab_switch_count > limit:
+        if cheating_event.tab_switch_count > 5:
             stop_event.set()  # Stop background threads (ensure stop_event is defined)
-            logger.info(f"Tab switches exceeded {limit}, terminated from the exam")
+            logger.info(f"Tab switches exceeded limit, terminated from the exam")
             return JsonResponse({
                 "status": "terminated",
                 "message": "You have exceeded the allowed tab switches. Your exam is terminated."
